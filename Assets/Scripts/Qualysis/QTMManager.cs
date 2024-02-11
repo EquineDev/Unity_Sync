@@ -261,17 +261,17 @@ public class QTMManager : NetworkBehaviour
         }
         foreach (string key in m_QTMPeople.Keys)
         {
-            GameObject rb = Instantiate(m_QTMPeople[key], Vector3.zero, Quaternion.identity);
+            GameObject people = Instantiate(m_QTMPeople[key], Vector3.zero, Quaternion.identity);
           
         }
         foreach (string key in m_QTMHorses.Keys)
         {
-            GameObject rb = Instantiate(m_QTMHorses[key], Vector3.zero, Quaternion.identity);
+            GameObject horse = Instantiate(m_QTMHorses[key], Vector3.zero, Quaternion.identity);
           
         }
         foreach (string key in m_QTMForcePlates.Keys)
         {
-            GameObject rb = Instantiate(m_QTMForcePlates[key], Vector3.zero, Quaternion.identity);
+            GameObject forcePlate = Instantiate(m_QTMForcePlates[key], Vector3.zero, Quaternion.identity);
           
         }
     }

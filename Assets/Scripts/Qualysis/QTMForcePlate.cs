@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using QualisysRealTime.Unity;
 using UnityEngine;
-
+[RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(RTForcePlate))]
 public class QTMForcePlate : MonoBehaviour, IQTMObjectInterface
 {
