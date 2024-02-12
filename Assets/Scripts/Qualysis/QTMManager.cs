@@ -252,7 +252,7 @@ public class QTMManager : NetworkBehaviour
     }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_LateJoinSync(RpcInfo info = default)
+    public void RPC_LateJoinSync(RpcInfo info = default)
     {
         foreach (string key in m_QTMRigidBodies.Keys)
         {
