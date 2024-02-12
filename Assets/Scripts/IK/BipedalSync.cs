@@ -121,53 +121,77 @@ public class BipedalSync : NetworkBehaviour
     private void SetTransforms(byte[] Data)
     {
         Tree<Transform> BipedalTree = TreeSerializationHelper.DeserializeTree<Transform>(Data);
+        Transform[] transformsBones = new Transform[3]; 
         
         m_hip.transform.position = BipedalTree.m_Root.m_Data.position;
         m_hip.transform.rotation = BipedalTree.m_Root.m_Data.rotation;
-
+        transformsBones[0] = m_hip;
+        
         m_neck.transform.position = BipedalTree.m_Root.m_Children[0].m_Data.position;
         m_neck.transform.rotation = BipedalTree.m_Root.m_Children[0].m_Data.rotation;
+        transformsBones[1] = m_neck;
         
         m_head.transform.position = BipedalTree.m_Root.m_Children[1].m_Data.position;
         m_head.transform.rotation = BipedalTree.m_Root.m_Children[1].m_Data.rotation;
+        transformsBones[2] = m_head;
+        
+        FABRIKSolver.Solve(ref m_head,ref transformsBones, ref m_FABRIK);
         
         m_upperLegR.transform.position = BipedalTree.m_Root.m_Siblings[3].m_Children[0].m_Data.position;
         m_upperLegR.transform.rotation = BipedalTree.m_Root.m_Siblings[3].m_Children[0].m_Data.rotation;
+        transformsBones[0] = m_upperLegR;
         
         m_lowerLegR.transform.position = BipedalTree.m_Root.m_Siblings[3].m_Children[1].m_Data.position;
         m_lowerLegR.transform.rotation = BipedalTree.m_Root.m_Siblings[3].m_Children[1].m_Data.rotation;
+        transformsBones[1] = m_lowerLegR;
         
-        m_lowerLegR.transform.position = BipedalTree.m_Root.m_Siblings[3].m_Children[2].m_Data.position;
-        m_lowerLegR.transform.rotation = BipedalTree.m_Root.m_Siblings[3].m_Children[2].m_Data.rotation;
+        m_FootR.transform.position = BipedalTree.m_Root.m_Siblings[3].m_Children[2].m_Data.position;
+        m_FootR.transform.rotation = BipedalTree.m_Root.m_Siblings[3].m_Children[2].m_Data.rotation;
+        transformsBones[2] = m_FootR;
+        
+        FABRIKSolver.Solve(ref m_FootR,ref transformsBones, ref m_FABRIK);
         
         m_upperLegL.transform.position = BipedalTree.m_Root.m_Siblings[2].m_Children[0].m_Data.position;
         m_upperLegL.transform.rotation = BipedalTree.m_Root.m_Siblings[2].m_Children[0].m_Data.rotation;
+        transformsBones[0] = m_upperLegL;
         
         m_lowerLegL.transform.position = BipedalTree.m_Root.m_Siblings[2].m_Children[1].m_Data.position;
         m_lowerLegL.transform.rotation = BipedalTree.m_Root.m_Siblings[2].m_Children[1].m_Data.rotation;
+        transformsBones[1] = m_lowerLegL;
         
         m_FootL.transform.position = BipedalTree.m_Root.m_Siblings[2].m_Children[2].m_Data.position;
         m_FootL.transform.rotation = BipedalTree.m_Root.m_Siblings[2].m_Children[2].m_Data.rotation;
+        transformsBones[2] = m_FootL;
+        
+        FABRIKSolver.Solve(ref m_FootL,ref transformsBones, ref m_FABRIK);
         
         m_upperArmR.transform.position = BipedalTree.m_Root.m_Siblings[1].m_Children[0].m_Data.position;
         m_upperArmR.transform.rotation = BipedalTree.m_Root.m_Siblings[1].m_Children[0].m_Data.rotation;
+        transformsBones[0] = m_upperArmR;
         
         m_lowerArmR.transform.position = BipedalTree.m_Root.m_Siblings[1].m_Children[1].m_Data.position;
         m_lowerArmR.transform.rotation = BipedalTree.m_Root.m_Siblings[1].m_Children[1].m_Data.rotation;
+        transformsBones[1] = m_lowerArmR;
         
         m_handR.transform.position = BipedalTree.m_Root.m_Siblings[1].m_Children[2].m_Data.position;
         m_handR.transform.rotation = BipedalTree.m_Root.m_Siblings[1].m_Children[2].m_Data.rotation;
+        transformsBones[2] = m_handR;
+        
+        FABRIKSolver.Solve(ref m_handR,ref transformsBones, ref m_FABRIK);
         
         m_upperArmL.transform.position = BipedalTree.m_Root.m_Siblings[0].m_Children[0].m_Data.position;
         m_upperArmL.transform.rotation = BipedalTree.m_Root.m_Siblings[0].m_Children[0].m_Data.rotation;
+        transformsBones[0] = m_upperArmL;
         
         m_lowerArmL.transform.position = BipedalTree.m_Root.m_Siblings[0].m_Children[1].m_Data.position;
         m_lowerArmL.transform.rotation = BipedalTree.m_Root.m_Siblings[0].m_Children[1].m_Data.rotation;
+        transformsBones[1] = m_lowerArmL;
         
         m_handL.transform.position = BipedalTree.m_Root.m_Siblings[0].m_Children[2].m_Data.position;
         m_handL.transform.rotation = BipedalTree.m_Root.m_Siblings[0].m_Children[2].m_Data.rotation;
+        transformsBones[2] = m_handL;
         
-        
+        FABRIKSolver.Solve(ref m_handL,ref transformsBones, ref m_FABRIK);
     }
     #endregion
    

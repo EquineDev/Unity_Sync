@@ -29,12 +29,18 @@ public static class FABRIKSolver
 
             // Convergence 
             if ((curPos[0] - bones[0].position).sqrMagnitude < settings.tolerance * settings.tolerance)
+            {
                 break;
+            }
+               
 
             // target is reached
-            if ((curPos[curPos.Length - 1] - target.position).sqrMagnitude < settings.targetThreshold * 
+            if ((curPos[curPos.Length - 1] - target.position).sqrMagnitude < settings.targetThreshold *
                 settings.targetThreshold)
+            {
                 break;
+            }
+              
 
             //damping
             for (int i = 0; i < bones.Length; i++)
@@ -51,7 +57,7 @@ public static class FABRIKSolver
         {
             Vector3 dir = curPos[i + 1] - curPos[i];
             float dis = dir.magnitude;
-        
+
             if (settings.applyConstraints && settings.jointConstraints != null && settings.jointConstraints.Length > i)
             {
                 Vector3 constraintDir = Vector3.ProjectOnPlane(settings.jointConstraints[i], dir);
@@ -86,19 +92,23 @@ public static class FABRIKSolver
     
     private static void PoleConstraint(ref Transform poleTarget, ref Vector3[] curPos)
     {
-        if (poleTarget != null && curPos.Length >= 3)
+        if (poleTarget != null && curPos.Length >= 2)
         {
-            Vector3 limbAxis = (curPos[2] - curPos[0]).normalized;
+            for (int i = 0; i < curPos.Length - 1; i++)
+            {
+                Vector3 limbAxis = (curPos[i + 1] - curPos[i]).normalized;
 
-            Vector3 poleDirection = (poleTarget.position - curPos[0]).normalized;
-            Vector3 boneDirection = (curPos[1] - curPos[0]).normalized;
+                Vector3 poleDirection = (poleTarget.position - curPos[i]).normalized;
+                Vector3 boneDirection = (curPos[Mathf.Min(i + 1, curPos.Length - 1)] - curPos[i]).normalized;
 
-            Vector3.OrthoNormalize(ref limbAxis, ref poleDirection);
-            Vector3.OrthoNormalize(ref limbAxis, ref boneDirection);
+                Vector3.OrthoNormalize(ref limbAxis, ref poleDirection);
+                Vector3.OrthoNormalize(ref limbAxis, ref boneDirection);
 
-            Quaternion angle = Quaternion.FromToRotation(boneDirection, poleDirection);
+                Quaternion angle = Quaternion.FromToRotation(boneDirection, poleDirection);
 
-            curPos[1] = angle * (curPos[1] - curPos[0]) + curPos[0];
+                curPos[Mathf.Min(i + 1, curPos.Length - 1)] = angle * 
+                    (curPos[Mathf.Min(i + 1, curPos.Length - 1)] - curPos[i]) + curPos[i];
+            }
         }
     }
 }
