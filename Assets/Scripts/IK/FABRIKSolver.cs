@@ -1,7 +1,6 @@
-
 using UnityEngine;
 
-public static class FABRIKSolver 
+public static class FABRIKSolver
 {
     public static void Solve(ref Transform target, ref Transform[] bones, ref FABRIKSettings settings)
     {
@@ -10,39 +9,35 @@ public static class FABRIKSolver
             Debug.LogWarning("FABRIK parameters are not set correctly.");
             return;
         }
-        
+
         Vector3[] curPos = new Vector3[bones.Length];
         Quaternion[] curRot = new Quaternion[bones.Length];
-        
+
         for (int i = 0; i < bones.Length; i++)
         {
             curPos[i] = bones[i].position;
             curRot[i] = bones[i].rotation;
         }
-
+        
         for (int itr = 0; itr < settings.maxIterations; itr++)
         {
-           
-            Foward(ref bones, ref curPos, ref settings);
-            Backwards(ref bones, ref curPos, ref settings);
-            PoleConstraint(ref target, ref curPos);
+            Forward(ref bones, ref curPos, ref curRot, ref settings);
+            Backward(ref bones, ref curPos, ref curRot, ref settings);
+            PoleConstraint(ref target, ref curPos, ref curRot, ref settings);
 
             // Convergence 
             if ((curPos[0] - bones[0].position).sqrMagnitude < settings.tolerance * settings.tolerance)
             {
                 break;
             }
-               
 
-            // target is reached
-            if ((curPos[curPos.Length - 1] - target.position).sqrMagnitude < settings.targetThreshold *
-                settings.targetThreshold)
+            // Target is reached
+            if ((curPos[curPos.Length - 1] - target.position).sqrMagnitude < settings.targetThreshold * settings.targetThreshold)
             {
                 break;
             }
-              
 
-            //damping
+            // Damping
             for (int i = 0; i < bones.Length; i++)
             {
                 curPos[i] = Vector3.Lerp(curPos[i], bones[i].position, settings.damping);
@@ -51,7 +46,8 @@ public static class FABRIKSolver
         }
     }
 
-    private static void Foward(ref Transform[] bones, ref Vector3[] curPos, ref FABRIKSettings settings )
+    private static void Forward(ref Transform[] bones, ref Vector3[] curPos, ref Quaternion[] curRot,
+        ref FABRIKSettings settings)
     {
         for (int i = 0; i < bones.Length - 1; i++)
         {
@@ -67,17 +63,23 @@ public static class FABRIKSolver
             {
                 curPos[i + 1] = curPos[i] + dir.normalized * dis;
             }
+
+            // Calculate rotation to point bone in the direction of movement
+            curRot[i] = Quaternion.LookRotation(dir, bones[i].up);
+            bones[i].rotation = curRot[i];
         }
     }
 
-    private static void Backwards(ref Transform[] bones, ref Vector3[] curPos, ref FABRIKSettings settings)
+    private static void Backward(ref Transform[] bones, ref Vector3[] curPos, ref Quaternion[] curRot,
+        ref FABRIKSettings settings)
     {
         for (int i = bones.Length - 1; i > 0; i--)
         {
             Vector3 dir = curPos[i - 1] - curPos[i];
             float dis = dir.magnitude;
-        
-            if (settings.applyConstraints && settings.jointConstraints != null && settings.jointConstraints.Length > i - 1)
+
+            if (settings.applyConstraints && settings.jointConstraints != null &&
+                settings.jointConstraints.Length > i - 1)
             {
                 Vector3 constraintDir = Vector3.ProjectOnPlane(settings.jointConstraints[i - 1], dir);
                 curPos[i - 1] = curPos[i] + constraintDir.normalized * dis;
@@ -86,11 +88,15 @@ public static class FABRIKSolver
             {
                 curPos[i - 1] = curPos[i] + dir.normalized * dis;
             }
+
+            // Calculate rotation to point bone in the direction of movement
+            curRot[i] = Quaternion.LookRotation(dir, bones[i].up);
+            bones[i].rotation = curRot[i];
         }
-        
     }
-    
-    private static void PoleConstraint(ref Transform poleTarget, ref Vector3[] curPos)
+
+    private static void PoleConstraint(ref Transform poleTarget, ref Vector3[] curPos, ref Quaternion[] curRot,
+        ref FABRIKSettings settings)
     {
         if (poleTarget != null && curPos.Length >= 2)
         {
@@ -106,8 +112,8 @@ public static class FABRIKSolver
 
                 Quaternion angle = Quaternion.FromToRotation(boneDirection, poleDirection);
 
-                curPos[Mathf.Min(i + 1, curPos.Length - 1)] = angle * 
-                    (curPos[Mathf.Min(i + 1, curPos.Length - 1)] - curPos[i]) + curPos[i];
+                curRot[i] = angle * Quaternion.LookRotation(curPos[i + 1] - curPos[i], bones[i].up);
+                bones[i].rotation = curRot[i];
             }
         }
     }

@@ -76,7 +76,7 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
     public void OnConnectedToServer(NetworkRunner runner)
     {
         Debug.Log("Connected to server");
-        SetConnectionStatus(ConnectionStatus.Connected);
+       
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
