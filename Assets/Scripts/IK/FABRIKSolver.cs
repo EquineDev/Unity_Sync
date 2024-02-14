@@ -112,8 +112,11 @@ public static class FABRIKSolver
 
                 Quaternion angle = Quaternion.FromToRotation(boneDirection, poleDirection);
 
-                curRot[i] = angle * Quaternion.LookRotation(curPos[i + 1] - curPos[i], bones[i].up);
-                bones[i].rotation = curRot[i];
+                // Calculate the new bone rotation
+                Quaternion newRot = angle * Quaternion.LookRotation(curPos[i + 1] - curPos[i], Vector3.up);
+
+                // Update the current rotation array
+                curRot[i] = newRot;
             }
         }
     }

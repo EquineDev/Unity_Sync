@@ -23,8 +23,8 @@ public static class FABRIKJobSolver
         FABRIKJob fabrikJob = new FABRIKJob
         {
             target = target.position,
-            bones = bonePositions,
-            rotations = boneRotations,
+            bonePositions = bonePositions,
+            boneRotations = boneRotations,
             settings = settings
         };
 
@@ -96,8 +96,9 @@ public struct FABRIKJob  : IJobParallelFor
         for (int i = index; i < bonePositions.Length - 1; i++)
         {
             Vector3 dir = bonePositions[i + 1] - bonePositions[i];
-            boneRotations[i] = Quaternion.LookRotation(dir, boneDirections[i]);
+            boneRotations[i] = LookRotation(dir, boneDirections[i]);
         }
+        
         // PoleConstraint
         if (index < bonePositions.Length - 1)
         {
@@ -173,15 +174,22 @@ public struct FABRIKJob  : IJobParallelFor
 
         return AxisAngleToQuaternion(axis, angle);
     }
+    //job friend Quaternion.LookRotation 
     private Quaternion LookRotation(Vector3 forward, Vector3 upwards)
     {
         if (forward == Vector3.zero)
+        {
             return Quaternion.identity;
+        }
+         
 
         Vector3 normalizedForward = Vector3.Normalize(forward);
 
-        if (Vector3.Cross(upwards, normalizedForward) == Vector3.zero)
+        if (CalculateRotationAxis(upwards, normalizedForward) == Vector3.zero)
+        {
             return Quaternion.LookRotation(Vector3.Cross(Vector3.up, normalizedForward), Vector3.up);
+        }
+         
 
         Vector3 right = Vector3.Normalize(CalculateRotationAxis(upwards, normalizedForward));
         Vector3 newUp = CalculateRotationAxis(normalizedForward, right);
