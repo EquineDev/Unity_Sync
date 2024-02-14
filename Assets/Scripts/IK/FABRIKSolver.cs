@@ -2,6 +2,9 @@ using UnityEngine;
 
 public static class FABRIKSolver
 {
+
+    #region public
+    
     public static void Solve(ref Transform target, ref Transform[] bones, ref FABRIKSettings settings)
     {
         if (target == null || bones == null || bones.Length == 0 || settings == null)
@@ -45,7 +48,10 @@ public static class FABRIKSolver
             }
         }
     }
+    #endregion
 
+    #region private
+    
     private static void Forward(ref Transform[] bones, ref Vector3[] curPos, ref Quaternion[] curRot,
         ref FABRIKSettings settings)
     {
@@ -120,4 +126,5 @@ public static class FABRIKSolver
             }
         }
     }
+    #endregion
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewTextData", menuName = "ScriptableObject/UI")]
+[CreateAssetMenu(fileName = "NewTextData", menuName = "ScriptableObject/UI/TextData")]
 public class TextDataScriptableObject : ScriptableObject
 {
     [System.Serializable]

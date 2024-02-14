@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Fusion;
+using QTMRealTimeSDK;
 using QualisysRealTime.Unity;
 using UnityEngine;
 
@@ -13,8 +14,10 @@ public class QTMManager : NetworkBehaviour
     }
 
     public bool m_Connected { get; private set; }
+    public Action TryingConnection; 
+    public Action<bool> ConnectAction; 
     private RTClientUpdater m_clientStreamer;
-
+    private DiscoveryResponse m_response;
     [SerializeField] protected GameObject m_RigidBodyPrefab;
     [SerializeField] protected GameObject m_HorsePrefab;
     [SerializeField] protected GameObject m_PeoplePrefab;
@@ -25,14 +28,12 @@ public class QTMManager : NetworkBehaviour
     protected Dictionary<String, GameObject> m_QTMHorses = new Dictionary<string, GameObject>();
     protected Dictionary<String, GameObject> m_QTMForcePlates = new Dictionary<string, GameObject>();
 
+    #region Public
     public void SetConnection(string ip = "127.0.0.1", short port = -1)
     {
         StartCoroutine(Connect(ip, port));
     }
-
-
-    #region Public
-
+    
     public void CreateRigidBody(string objectName)
     {
         if (!m_Connected) return;
@@ -281,7 +282,10 @@ public class QTMManager : NetworkBehaviour
     #endregion
     IEnumerator Connect(string ip , short port)
     {
-        RTClient.GetInstance().StartConnecting(ip, port, true, true, false, true, false, true, true);
+        TryingConnection?.Invoke();
+        
+        m_response.IpAddress = ip;
+        RTClient.GetInstance().StartConnecting( m_response.IpAddress, port, true, true, false, true, false, true, true);
         
         
         while (RTClient.GetInstance().ConnectionState == RTConnectionState.Connecting) 
@@ -290,6 +294,7 @@ public class QTMManager : NetworkBehaviour
         }
         
         m_Connected = RTClient.GetInstance().ConnectionState == RTConnectionState.Connected;
+        ConnectAction?.Invoke(m_Connected);
     }
     
 }

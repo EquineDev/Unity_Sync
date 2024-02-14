@@ -205,4 +205,14 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 	}
 
     #endregion
+
+    #region override
+
+    protected override void Init()
+    {
+	    base.Init();
+	    DontDestroyOnLoad(this);
+    }
+
+    #endregion
 }

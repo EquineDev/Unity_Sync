@@ -36,8 +36,11 @@ public class TextDisplay : MonoBehaviour
         }
     }
 
+    #region public
+    
     public void ToggleText(bool enable)
     {
         m_displayText.enabled = enable;
     }
+    #endregion
 }

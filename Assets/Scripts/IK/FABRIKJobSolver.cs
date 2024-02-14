@@ -6,6 +6,11 @@ using UnityEngine;
 
 public static class FABRIKJobSolver
 {
+    #region  public
+
+    
+
+
     public static void Solve(ref Transform target, ref Transform[] bones, ref FABRIKSettings settings)
     {
         // Create NativeArrays to hold bone positions and rotations
@@ -45,6 +50,7 @@ public static class FABRIKJobSolver
         bonePositions.Dispose();
         boneRotations.Dispose();
     }
+    #endregion
 }
 
 public struct FABRIKJob  : IJobParallelFor

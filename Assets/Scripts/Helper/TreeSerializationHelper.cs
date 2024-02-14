@@ -5,6 +5,8 @@ using UnityEngine;
 
 public static class TreeSerializationHelper 
 {
+    #region public
+    
     public static byte[] SerializeTree<T>(Tree<T> tree)
     {
         BinaryFormatter formatter = new BinaryFormatter();
@@ -49,4 +51,6 @@ public static class TreeSerializationHelper
             stream.Close();
         }
     }
+    #endregion
+    
 }

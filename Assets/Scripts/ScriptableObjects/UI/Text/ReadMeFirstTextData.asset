@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08ce2f9f6f08ccd40a02bb62099068ee, type: 3}
+  m_Name: ReadMeFirstTextData
+  m_EditorClassIdentifier: 
+  TextData:
+    text: By utilizing this software, you acknowledge and agree that you have not
+      derived any financial benefits, facilitated, or engaged with products or services
+      offered by institutions/entities implicated in the creation or perpetuation
+      of child sexual abuse (CSA) or sexual abuse (SA) survivors. This software is
+      designed to synchronize brain-computer interfaces with motion capture data.
+      I affirm that I will not cause harm to patients utilizing the motion capture
+      system and brain-computer interfaces while using this software.
+    color: {r: 0, g: 0, b: 0, a: 1}
+    fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    fontSize: 16
