@@ -4,14 +4,88 @@ using Mono.Data.Sqlite;
 using System.Data;
 using UnityEngine;
 
-public static class DatabaseManager 
+public static class DatabaseManager
 {
     private static string connectionString;
-    private static  bool m_isLoggedIn; 
+    private static bool m_isLoggedIn;
+
+    public static bool IsLoggedIn
+    {
+        get { return m_isLoggedIn; }
+        set { m_isLoggedIn = value; }
+    }
     public static void SetupDatabasePath()
     {
-        
         connectionString = GetDatabasePath();
+    }
+    
+   
+
+    public static void CreateDatabase()
+    {
+        if (DatabaseExists())
+        {
+            Debug.LogWarning("Database already exists.");
+            return;
+        }
+
+        IDbConnection dbConnection = null;
+        IDbCommand dbCmd = null;
+
+        try
+        {
+            // Establish connection
+            dbConnection = new SqliteConnection(connectionString);
+            dbConnection.Open();
+
+            // Create tables
+            dbCmd = dbConnection.CreateCommand();
+            string createResearchAccountsTable = "CREATE TABLE IF NOT EXISTS ResearchAccounts (" +
+                                                 "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                                 "Name TEXT, " +
+                                                 "Email TEXT UNIQUE, " +
+                                                 "Institution TEXT, " +
+                                                 "Role TEXT, " +
+                                                 "Password TEXT)";
+            dbCmd.CommandText = createResearchAccountsTable;
+            dbCmd.ExecuteNonQuery();
+
+            string createPatientsTable = "CREATE TABLE IF NOT EXISTS Patients (" +
+                                         "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                         "Name TEXT, " +
+                                         "DateOfBirth TEXT, " +
+                                         "Gender TEXT, " +
+                                         "HorseName TEXT)";
+            dbCmd.CommandText = createPatientsTable;
+            dbCmd.ExecuteNonQuery();
+
+            string createSessionsTable = "CREATE TABLE IF NOT EXISTS Sessions (" +
+                                         "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                         "PatientId INTEGER, " +
+                                         "SessionData TEXT, " +
+                                         "FOREIGN KEY(PatientId) REFERENCES Patients(ID))";
+            dbCmd.CommandText = createSessionsTable;
+            dbCmd.ExecuteNonQuery();
+
+            // Additional tables can be created similarly if needed
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error creating database: {e.Message}");
+        }
+        finally
+        {
+            // Cleanup
+            if (dbCmd != null)
+            {
+                dbCmd.Dispose();
+            }
+
+            if (dbConnection != null)
+            {
+                dbConnection.Close();
+            }
+        }
     }
 
     public static int InsertResearchAccount(string name, string email, string institution, string role, string password)
@@ -55,6 +129,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -63,7 +138,7 @@ public static class DatabaseManager
 
         return accountId;
     }
-    
+
     public static void ResetPassword(string email, string newPassword)
     {
         // Check if the user exists
@@ -96,26 +171,29 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
-    public static void UpdateResearchAccount(int accountId, string newName, string newEmail, string newInstitution, string newRole)
+
+    public static void UpdateResearchAccount(int accountId, string newName, string newEmail, string newInstitution,
+        string newRole)
     {
         IDbConnection dbConnection = null;
         IDbCommand dbCmd = null;
-        
+
         try
         {
             dbConnection = new SqliteConnection(connectionString);
             dbConnection.Open();
 
             dbCmd = dbConnection.CreateCommand();
-            string sqlQuery = $"UPDATE ResearchAccounts SET Name='{newName}', Email='{newEmail}', Institution='{newInstitution}', Role='{newRole}' " +
-                              $"WHERE ID={accountId}";
+            string sqlQuery =
+                $"UPDATE ResearchAccounts SET Name='{newName}', Email='{newEmail}', Institution='{newInstitution}', Role='{newRole}' " +
+                $"WHERE ID={accountId}";
             dbCmd.CommandText = sqlQuery;
             dbCmd.ExecuteNonQuery();
         }
@@ -129,13 +207,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
+
     public static void DeleteAccountByEmail(string email)
     {
         // Check if the user exists
@@ -168,6 +247,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -206,6 +286,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -215,7 +296,6 @@ public static class DatabaseManager
 
     public static string GetResearchAccountById(int accountId)
     {
-
         string result = null;
         IDbConnection dbConnection = null;
         IDbCommand dbCmd = null;
@@ -233,7 +313,8 @@ public static class DatabaseManager
             {
                 if (reader.Read())
                 {
-                    result = $"{reader.GetString(1)}, {reader.GetString(2)}, {reader.GetString(3)}, {reader.GetString(4)}";
+                    result =
+                        $"{reader.GetString(1)}, {reader.GetString(2)}, {reader.GetString(3)}, {reader.GetString(4)}";
                 }
             }
         }
@@ -247,6 +328,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -255,7 +337,7 @@ public static class DatabaseManager
 
         return result;
     }
-    
+
     public static int GetAccountIdByEmail(string email)
     {
         int accountId = -1; // Default value if account not found
@@ -270,7 +352,7 @@ public static class DatabaseManager
             dbCmd = dbConnection.CreateCommand();
             string sqlQuery = $"SELECT ID FROM ResearchAccounts WHERE Email='{email}'";
             dbCmd.CommandText = sqlQuery;
-            
+
             object result = dbCmd.ExecuteScalar();
             if (result != null)
             {
@@ -287,6 +369,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -295,7 +378,7 @@ public static class DatabaseManager
 
         return accountId;
     }
-    
+
     public static bool Login(string email, string password)
     {
         IDbConnection dbConnection = null;
@@ -311,7 +394,7 @@ public static class DatabaseManager
             string sqlQuery = $"SELECT COUNT(*) FROM ResearchAccounts WHERE Email='{email}' AND Password='{password}'";
             dbCmd.CommandText = sqlQuery;
 
-           
+
             int count = Convert.ToInt32(dbCmd.ExecuteScalar());
             loginSuccessful = count > 0;
             m_isLoggedIn = loginSuccessful;
@@ -326,6 +409,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -334,7 +418,7 @@ public static class DatabaseManager
 
         return loginSuccessful;
     }
-    
+
     public static void AddPatient(string name, DateTime dateOfBirth, string gender, string horseName)
     {
         IDbConnection dbConnection = null;
@@ -361,13 +445,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-        
+
     public static void RemovePatient(int patientId)
     {
         IDbConnection dbConnection = null;
@@ -393,13 +478,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
+
     public static void UpdatePatient(int patientId, string name, DateTime dateOfBirth, string gender, string horseName)
     {
         IDbConnection dbConnection = null;
@@ -411,8 +497,9 @@ public static class DatabaseManager
             dbConnection.Open();
 
             dbCmd = dbConnection.CreateCommand();
-            string sqlQuery = $"UPDATE Patients SET Name='{name}', DateOfBirth='{dateOfBirth.ToString("yyyy-MM-dd")}', " +
-                              $"Gender='{gender}', HorseName='{horseName}' WHERE ID={patientId}";
+            string sqlQuery =
+                $"UPDATE Patients SET Name='{name}', DateOfBirth='{dateOfBirth.ToString("yyyy-MM-dd")}', " +
+                $"Gender='{gender}', HorseName='{horseName}' WHERE ID={patientId}";
             dbCmd.CommandText = sqlQuery;
             dbCmd.ExecuteNonQuery();
         }
@@ -426,13 +513,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
+
     public static List<string> GetAllPatients()
     {
         List<string> patients = new List<string>();
@@ -452,8 +540,9 @@ public static class DatabaseManager
             {
                 while (reader.Read())
                 {
-                    string patientInfo = $"ID: {reader.GetInt32(0)}, Name: {reader.GetString(1)}, Date of Birth: {reader.GetDateTime(2)}, " +
-                                         $"Gender: {reader.GetString(3)}, Horse Name: {reader.GetString(4)}";
+                    string patientInfo =
+                        $"ID: {reader.GetInt32(0)}, Name: {reader.GetString(1)}, Date of Birth: {reader.GetDateTime(2)}, " +
+                        $"Gender: {reader.GetString(3)}, Horse Name: {reader.GetString(4)}";
                     patients.Add(patientInfo);
                 }
             }
@@ -468,6 +557,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -476,7 +566,7 @@ public static class DatabaseManager
 
         return patients;
     }
-    
+
     public static void AddSessionForPatient(int patientId, string sessionData)
     {
         IDbConnection dbConnection = null;
@@ -502,13 +592,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
+
     public static void RemoveSessionForPatient(int patientId, int sessionId)
     {
         IDbConnection dbConnection = null;
@@ -534,13 +625,14 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
             }
         }
     }
-    
+
     public static List<string> GetSessionsForPatient(int patientId)
     {
         List<string> sessions = new List<string>();
@@ -575,6 +667,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -585,14 +678,13 @@ public static class DatabaseManager
     }
 
     #region Private
-    
+
     private static string GetDatabasePath()
     {
-    
         TextAsset config = Resources.Load<TextAsset>("DatabaseConfig");
         return config.text.Trim();
     }
-    
+
     private static bool IsUserExists(string email)
     {
         bool exists = false;
@@ -608,7 +700,7 @@ public static class DatabaseManager
             string sqlQuery = $"SELECT COUNT(*) FROM ResearchAccounts WHERE Email='{email}'";
             dbCmd.CommandText = sqlQuery;
 
-           
+
             int count = Convert.ToInt32(dbCmd.ExecuteScalar());
             exists = count > 0;
         }
@@ -622,6 +714,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -630,7 +723,7 @@ public static class DatabaseManager
 
         return exists;
     }
-    
+
     private static bool IsUserExists(int accountId)
     {
         bool exists = false;
@@ -645,7 +738,7 @@ public static class DatabaseManager
             dbCmd = dbConnection.CreateCommand();
             string sqlQuery = $"SELECT COUNT(*) FROM ResearchAccounts WHERE ID={accountId}";
             dbCmd.CommandText = sqlQuery;
-            
+
             int count = Convert.ToInt32(dbCmd.ExecuteScalar());
             exists = count > 0;
         }
@@ -659,6 +752,7 @@ public static class DatabaseManager
             {
                 dbCmd.Dispose();
             }
+
             if (dbConnection != null)
             {
                 dbConnection.Close();
@@ -666,6 +760,10 @@ public static class DatabaseManager
         }
 
         return exists;
+    }
+    private static bool DatabaseExists()
+    {
+        return System.IO.File.Exists(GetDatabasePath());
     }
     
     #endregion

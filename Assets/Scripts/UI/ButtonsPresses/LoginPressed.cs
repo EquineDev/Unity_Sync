@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class LoginPressed : MonoBehaviour
 {
-    public UnityEvent m_loginSuccessful ; 
+    public UnityEvent<string> m_loginSuccessful ; 
     [SerializeField]
     private TMP_InputField m_userNameField;
     [SerializeField]
@@ -26,7 +26,7 @@ public class LoginPressed : MonoBehaviour
         {
             if (DatabaseManager.Login(m_userNameField.text,  m_passwordField.text))
             {
-                m_loginSuccessful?.Invoke();
+                m_loginSuccessful?.Invoke(m_userNameField.text);
                 
             }
             else
