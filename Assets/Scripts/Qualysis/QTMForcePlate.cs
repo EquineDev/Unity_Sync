@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
 
-public class QTMForcePlate : MonoBehaviour, IQTMObjectInterface
+public class QTMForcePlate : NetworkBehaviour, IQTMObjectInterface
 {
     [SerializeField] private LineRenderer m_forceArrow;
     [SerializeField] private LineRenderer m_momentArrow;
