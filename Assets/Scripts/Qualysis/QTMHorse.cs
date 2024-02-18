@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(RTSkeleton))]
 public class QTMHorse : MonoBehaviour, IQTMObjectInterface
 {
+    
+    
     private RTSkeleton m_HorseSkeleton;
 
     private void Awake()

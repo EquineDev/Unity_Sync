@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_QTMManager: {fileID: 6986589300972031703}
+  m_playerPrefab:
+    RawGuidValue: 00000000000000000000000000000000
 --- !u!114 &1259855722088994564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,9 +64,9 @@ MonoBehaviour:
   SortKey: 4137346039
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
+  NestedObjects:
   - {fileID: 6986589300972031703}
+  NetworkedBehaviours: []
 --- !u!1 &7370467355651880556
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,6 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e9b83fb6d7b61448187054aea73abf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SortKey: 3696024028
+  ObjectInterest: 1
+  Flags: 1
+  NestedObjects: []
+  NetworkedBehaviours: []
   m_RigidBodyPrefab: {fileID: 6409732376645161309, guid: beb212a1aff43d046aec0c04f69a4c36,
     type: 3}
   m_HorsePrefab: {fileID: 4283620147578045701, guid: a66a2915eb030fb4cb7c33f94a239b8c,
