@@ -8,3 +8,4 @@ The following third party licenses are used
 * QTM Connect for Unity Copyright (c) 2015 Qualisys, MIT license, see(https://github.com/qualisys/QTM-Connect-For-Unity)
 * SQLLite For Unity Copyright (c) 2018 Rizwan Asif, MIT license, see(https://github.com/rizasif/sqlite-unity-plugin)
 * Photon Fussion  Copyright (c) 2024 Exit Games, See terms(https://www.photonengine.com/)
+* All product names, logos, and brands are property of their respective owners. All company, product and service names used are for identification purposes only.
