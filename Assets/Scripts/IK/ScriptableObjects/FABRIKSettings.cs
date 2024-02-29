@@ -1,6 +1,6 @@
 
 using UnityEngine;
-[CreateAssetMenu(fileName = "FABRIKSettings", menuName = "FABRIK/Settings")]
+[CreateAssetMenu(fileName = "FABRIKSettings", menuName = "IKSolver/FABRIK")]
 public class FABRIKSettings : ScriptableObject
 {
     [Header("Solver Parameters")]
