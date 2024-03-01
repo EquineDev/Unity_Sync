@@ -8,17 +8,26 @@ using UnityEngine;
 public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCallbacks
 {
 
-    [SerializeField]
-    private QTMManager m_QTMManager;
+	public NetworkRunnerHandle NetworkRunnerHandle { get; private set; } 
+	public String SceneMap { get; private set; } 
+	public List<SessionInfo> Session { get; private set; } = new List<SessionInfo>();
+	public GameMode SessionLobbyType { get; private set; } = GameMode.Shared;
+	public QTMManager QTMManager { get; private set; }
+	
     [SerializeField] private NetworkPrefabRef m_playerPrefab;
-    private Dictionary<PlayerRef, NetworkObject> M_spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
-    
-    public ref QTMManager GetQTMManager()
+    private Dictionary<PlayerRef, NetworkObject> m_spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
+    [SerializeField] 
+    private NetworkRunnerHandle m_networkHandler { get;  }
+
+
+
+    public void ConnectToLobby(string Name, SessionLobby Type)
     {
-        return ref m_QTMManager;
+	    m_networkHandler.NetworkRunnerClient.JoinSessionLobby(Type);
     }
 
-    #region
+   
+    #region Photon Fussion Calls
 
 
 
@@ -29,12 +38,12 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 	    {
 		    Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
 		    NetworkObject networkPlayerObject = runner.Spawn(m_playerPrefab, spawnPosition, Quaternion.identity, player);
-		    M_spawnedPlayers.Add(player, networkPlayerObject);
+		    m_spawnedPlayers.Add(player, networkPlayerObject);
 		    
 		    RpcInfo rpcInfo = new RpcInfo();
 		    rpcInfo.Source = player;
 		    rpcInfo.Channel = RpcChannel.Reliable;
-		    m_QTMManager.RPC_LateJoinSync(rpcInfo);
+		    QTMManager.RPC_LateJoinSync(rpcInfo);
 		    Debug.Log("Player Has Joined Session:" + player.PlayerId);
 	    }
 	    else
@@ -46,10 +55,10 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-	    if (M_spawnedPlayers.TryGetValue(player, out NetworkObject networkObject))
+	    if (m_spawnedPlayers.TryGetValue(player, out NetworkObject networkObject))
 	    {
 		    runner.Despawn(networkObject);
-		    M_spawnedPlayers.Remove(player);
+		    m_spawnedPlayers.Remove(player);
 		    Debug.Log("Player Has Left Session:" + player.PlayerId);
 	    }
 	    else
@@ -101,7 +110,9 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        
+	    Debug.Log("Session List Updated");
+	    Session.Clear();
+	    Session = sessionList;
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
