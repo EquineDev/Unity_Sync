@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Fusion;
@@ -6,11 +7,25 @@ using UnityEngine;
 
 public class JoinLobby : MonoBehaviour
 {
-    public TextDisplay m_roomName;
-    public TextDisplay m_playerCount;
+    private TextDisplay m_roomName;
+    private TextDisplay m_playerCount;
+    private GameObject m_joinSessionObject;
+    private GameObject m_joinWindowList;
+    #region public
 
-    public void JoinSession()
+    public void Setup(string name, string roomcount, ref GameObject WindowListObj ,ref GameObject PasswordObj,  ref string key )
     {
-        ConnectionManager.Instance.ConnectToLobby(m_roomName.GetTextName(), SessionLobby.Custom);
+        m_roomName.UpdateText(name);
+        m_playerCount.UpdateText(roomcount);
+        m_joinSessionObject = PasswordObj;
+        m_joinWindowList = WindowListObj;
+        m_joinSessionObject.GetComponent<JoinLobbyPassword>().Setup(ref key, ref name );
     }
+
+    public void OpenPasswordWindow()
+    {
+        m_joinSessionObject.SetActive(true);
+        m_joinWindowList.SetActive(false);
+    }
+    #endregion
 }

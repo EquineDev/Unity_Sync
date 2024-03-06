@@ -14,10 +14,13 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 	public GameMode SessionLobbyType { get; private set; } = GameMode.Shared;
 	public QTMManager QTMManager { get; private set; }
 	
-    [SerializeField] private NetworkPrefabRef m_playerPrefab;
-    private Dictionary<PlayerRef, NetworkObject> m_spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
     [SerializeField] 
-    private NetworkRunnerHandle m_networkHandler { get;  }
+    private NetworkPrefabRef m_playerPrefab;
+    [SerializeField] 
+    private QTMManager m_QTMManagerRef; 
+    [SerializeField] 
+    private NetworkRunnerHandle m_networkHandler;
+    private Dictionary<PlayerRef, NetworkObject> m_spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
 
 
 
@@ -26,7 +29,11 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 	    m_networkHandler.ConnectToSesssion(name);
     }
 
-   
+    public void CreateLobby(string name, string password, SessionLobby type)
+    {
+	    m_networkHandler.CreateSession(name, password);
+    }
+
     #region Photon Fussion Calls
 
 
@@ -223,6 +230,8 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
     {
 	    base.Init();
 	    DontDestroyOnLoad(this);
+	    QTMManager = m_QTMManagerRef;
+	    NetworkRunnerHandle = m_networkHandler;
     }
 
     #endregion

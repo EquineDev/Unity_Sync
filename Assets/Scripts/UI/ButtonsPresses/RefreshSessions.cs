@@ -9,7 +9,11 @@ public class RefreshSessions : MonoBehaviour
     private Transform m_sessionContents;
 
     [SerializeField] 
-    private GameObject m_sessionPrefab; 
+    private GameObject m_sessionPrefab;
+    [SerializeField] 
+    private GameObject m_joinWindowList;
+    [SerializeField] 
+    private GameObject m_joinPasswordWindow;
     public void RefreshList()
     {
         foreach (Transform session in m_sessionContents)
@@ -23,10 +27,9 @@ public class RefreshSessions : MonoBehaviour
                 continue;
             GameObject obj = GameObject.Instantiate(m_sessionPrefab, m_sessionContents.transform);
             JoinLobby lobby = obj.GetComponent<JoinLobby>();
-            lobby.m_roomName.UpdateText(info.Name);
-            lobby.m_playerCount.UpdateText(info.PlayerCount + "/" + info.MaxPlayers);
-           
-            
+            string key = info.Properties.GetValueOrDefault("sessionKey").PropertyValue as string;
+            lobby.Setup(info.Name,info.PlayerCount + "/" + info.MaxPlayers, ref m_joinWindowList,
+                ref m_joinPasswordWindow, ref key );
         }
     }
 }

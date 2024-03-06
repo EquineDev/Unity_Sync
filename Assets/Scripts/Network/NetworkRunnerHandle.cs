@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ public class NetworkRunnerHandle : MonoBehaviour
             SessionName =  Name
         });
     }
-    public async void CreateSession (string Name)
+    public async void CreateSession (string Name, string Password)
     {
         if (!NetworkRunnerClient)
             return;
@@ -42,11 +43,17 @@ public class NetworkRunnerHandle : MonoBehaviour
             sceneManager = NetworkRunnerClient.gameObject.AddComponent<NetworkSceneManagerDefault>();
         }
 
+        SessionProperty property;
+        property = Password;
+        Dictionary<string,SessionProperty> sessionproperty = new Dictionary<string, SessionProperty>();
+        sessionproperty.Add("sessionKey", property);
+        
         NetworkRunnerClient.ProvideInput = true;
         await NetworkRunnerClient.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Host,
             SessionName =  Name,
+            SessionProperties = sessionproperty,
             PlayerCount =  2,
             IsOpen = true,
             SceneManager = sceneManager
