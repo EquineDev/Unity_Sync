@@ -15,7 +15,7 @@ public class NetworkRunnerHandle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NetworkRunnerClient = this.AddComponent<NetworkRunner>()
+        NetworkRunnerClient = this.AddComponent<NetworkRunner>();
 
     }
 

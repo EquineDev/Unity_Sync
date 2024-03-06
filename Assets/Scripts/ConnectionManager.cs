@@ -21,9 +21,9 @@ public class ConnectionManager : Singleton<ConnectionManager>, INetworkRunnerCal
 
 
 
-    public void ConnectToLobby(string Name, SessionLobby Type)
+    public void ConnectToLobby(string name, SessionLobby type)
     {
-	    m_networkHandler.NetworkRunnerClient.JoinSessionLobby(Type);
+	    m_networkHandler.ConnectToSesssion(name);
     }
 
    

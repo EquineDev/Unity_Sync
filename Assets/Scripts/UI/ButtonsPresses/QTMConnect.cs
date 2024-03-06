@@ -15,21 +15,21 @@ public class QTMConnect : MonoBehaviour
 
     private void OnEnable()
     {
-        ConnectionManager.Instance.GetQTMManager().ConnectAction += HasFinishedTryingToConnect;
+        ConnectionManager.Instance.QTMManager.ConnectAction += HasFinishedTryingToConnect;
     }
 
     private void OnDisable()
     {
-        ConnectionManager.Instance.GetQTMManager().ConnectAction -= HasFinishedTryingToConnect;
+        ConnectionManager.Instance.QTMManager.ConnectAction -= HasFinishedTryingToConnect;
     }
 
     #region public
     
     public void TryToconnectToQTM()
     {
-        if (ConnectionManager.Instance.GetQTMManager().m_Connected || m_tryingToConnect)
+        if (ConnectionManager.Instance.QTMManager.m_Connected || m_tryingToConnect)
             return;
-        ConnectionManager.Instance.GetQTMManager().SetConnection(m_inputField.text);
+        ConnectionManager.Instance.QTMManager.SetConnection(m_inputField.text);
         m_tryingToConnect = true; 
     }
     #endregion

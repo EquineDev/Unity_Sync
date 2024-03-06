@@ -6,13 +6,13 @@ public class StatusStageConnection : UpdateConnectionStatus
 {
     private void OnEnable()
     {
-        ConnectionManager.Instance.GetQTMManager().ConnectAction += ConnectionStatus;
-        ConnectionManager.Instance.GetQTMManager().TryingConnection += TryingConnection;
+        ConnectionManager.Instance.QTMManager.ConnectAction += ConnectionStatus;
+        ConnectionManager.Instance.QTMManager.TryingConnection += TryingConnection;
     }
 
     private void OnDisable()
     {
-        ConnectionManager.Instance.GetQTMManager().ConnectAction -= ConnectionStatus;
-        ConnectionManager.Instance.GetQTMManager().TryingConnection -= TryingConnection;
+        ConnectionManager.Instance.QTMManager.ConnectAction -= ConnectionStatus;
+        ConnectionManager.Instance.QTMManager.TryingConnection -= TryingConnection;
     }
 }

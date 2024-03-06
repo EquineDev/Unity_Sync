@@ -11,6 +11,7 @@ public class TextDisplay : MonoBehaviour
     [SerializeField] private bool m_displayAtStart = false;
     private TMP_Text m_displayText; // Reference to the TextMeshPro component to display the text data
     
+    
     void Start()
     {
         m_displayText = GetComponent<TMP_Text>();
@@ -38,6 +39,10 @@ public class TextDisplay : MonoBehaviour
 
     #region public
 
+    public string GetTextName()
+    {
+        return m_displayText.text;
+    }
     public void UpdateText(string displayName)
     {
         m_displayText.name = displayName;

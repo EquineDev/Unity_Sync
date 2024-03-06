@@ -11,6 +11,6 @@ public class CreateSession : MonoBehaviour
     
     public void SubmitSessionName()
     {
-        ConnectionManager.Instance.ConnectToLobby(m_nameField.text, m_sessionLobby);
+        ConnectionManager.Instance.ConnectToLobby(m_nameField.text, SessionLobby.Custom);
     }
 }

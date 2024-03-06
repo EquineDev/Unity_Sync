@@ -15,7 +15,7 @@ public class QTMForcePlate : NetworkBehaviour, IQTMObjectInterface
 
     private void Update()
     {
-        if (m_forceVector != null && !ConnectionManager.Instance.GetQTMManager().m_Connected)
+        if (m_forceVector != null && !ConnectionManager.Instance.QTMManager.m_Connected)
             return;
         RPC_SendData(true, m_forceVector.Force, m_forceVector.ApplicationPoint);
         RPC_SendData(false, m_forceVector.Moment, m_forceVector.ApplicationPoint);
